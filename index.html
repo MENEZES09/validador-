@@ -25,16 +25,7 @@
             font-weight: bold;
         }
     </style>
-
-    <link rel="manifest" href="manifest.json">
-    <script>
-        if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('service-worker.js')
-                .then(function() { console.log("Service Worker registrado!"); });
-        }
-    </script>
-    </head>
-    
+</head>
 <body>
     <h1>Validação de Convite</h1>
     <p>Escaneie o QR Code com a câmera</p>
@@ -56,7 +47,7 @@
             .then(stream => {
                 video.srcObject = stream;
                 video.setAttribute("playsinline", true);
-                requestAnimationFrame(scan);
+                setTimeout(() => { window.aguardando = false; requestAnimationFrame(scan); }, 3000);
             });
 
         function scan() {
@@ -67,7 +58,10 @@
                 const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
                 const code = jsQR(imageData.data, imageData.width, imageData.height, { inversionAttempts: "dontInvert" });
                 
-                if (code) {
+                
+        if (code && !window.aguardando) {
+            window.aguardando = true;
+    
                     const codigo = code.data.trim();
                     if (codigo in convidados) {
                         if (usados.has(codigo)) {
@@ -84,7 +78,7 @@
                     }
                 }
             }
-            requestAnimationFrame(scan);
+            setTimeout(() => { window.aguardando = false; requestAnimationFrame(scan); }, 3000);
         }
     </script>
 </body>
