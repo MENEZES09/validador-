@@ -1,0 +1,91 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Validação de QR Code</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 30px auto;
+            text-align: center;
+        }
+        video {
+            width: 100%;
+            border: 1px solid #ccc;
+            margin-top: 20px;
+        }
+        canvas {
+            display: none;
+        }
+        .resultado {
+            margin-top: 20px;
+            font-size: 20px;
+            font-weight: bold;
+        }
+    </style>
+
+    <link rel="manifest" href="manifest.json">
+    <script>
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('service-worker.js')
+                .then(function() { console.log("Service Worker registrado!"); });
+        }
+    </script>
+    </head>
+    
+<body>
+    <h1>Validação de Convite</h1>
+    <p>Escaneie o QR Code com a câmera</p>
+    <video id="video" autoplay></video>
+    <canvas id="canvas"></canvas>
+    <div class="resultado" id="resultado">Aguardando leitura...</div>
+
+    <script src="https://cdn.jsdelivr.net/npm/jsqr/dist/jsQR.js"></script>
+    <script>
+        const convidados = {"95bb3fd3": "Adriana De Menezes", "543a8988": "Renan Menezes", "37d33c60": "Nana", "2d07a01d": "Adriele Rodrigues Dos Santos", "99404c53": "Alan Amaral", "8880a0bb": "Alexandra Fernandes Do Nascimento", "8503d84c": "Amanda Barbosa Da Silva", "df8bc4f6": "Amauri J\u00fanior", "27b3fc03": "Ana Claudia", "4465371f": "Ana Lucia Miranda", "ee787907": "Jaqueline Ohana", "990b7a7d": "Suellen Silva", "a6d5166d": "Ana Luiza Gomes Da Motta", "afb1861f": "AC: Roger", "b52d82ae": "AC: Rom\u00e1rio", "97710f4a": "Antonio Carlos", "c984d092": "Barbara Lima", "3c13e28b": "AC: Julio C\u00e9sar", "e46f0e60": "Caio Machado", "de3eae80": "Camila Feitosa Goncalves", "f8cc5a6e": "Carine Muniz", "cb99933e": "Daniele Fran\u00e7a", "9dd543fa": "Dyulia Lessan Mendes Silva Da Nobrega", "6908e50d": "Emilly Carolaine De Oliveira", "18b39afb": "Erick Bernardo Rosa", "c368cd94": "AC: Pricila Franco Machado", "bc0fc037": "F\u00e1bio G\u00f3es", "ab825942": "AC: L\u00e9ia Moura", "ec73e8a1": "Fayla Marinho", "5091a83b": "Felipe Crizzi", "fc1dc6ec": "AC: Laryssa Crizzi", "04c50b9a": "Felipe Da Silva", "4f21d05a": "Flaviano Silva", "616c4e4a": "Gabriel Medeiros", "1c159b05": "Gabriela Freduzeski", "6fd49cef": "Gustavo Pereira", "c2be25c6": "AC: Vit\u00f3ria Santos", "1cb59697": "Hellen Evelyn Moreira Da Costa", "c511dc0e": "Hellen Oliveira", "992ba361": "Iarley Couto", "e665009c": "AC: Yan Reis", "9b8124cf": "Ingrid Andrade", "8d3886b0": "Ingrid Costa Guimar\u00e3es", "13069c65": "\u00cdris Mattos", "a69faaa4": "AC: Matheus Braga", "89d6b018": "Italo Henrique", "1c4c7c9b": "Iury Muniz", "a9629086": "Izabel Rodrigues", "92bf7bc1": "Janne Ximenes", "d0d2248e": "AC: Paulo Imbroinisio", "abb80af3": "Joelson Sant Ana", "d205f0bb": "John Lenon Santos", "a7707d04": "J\u00falia Fernandes", "59089879": "Juliana Braga", "4b0526ec": "Juliana Rosa", "3c9ee26a": "J\u00fanior Copaja", "7596aff1": "Kadu", "79f2adf8": "Karoline Moisinho", "ad633162": "Kathleem Moreira", "7817f8ac": "Kayque Harry", "f0aaadfe": "Lara Per\u00e1cio", "0e62ae14": "Larissa Kelly Kelly", "3052063c": "Lucilene Nunes", "ad8408d6": "Lucinete Moreira", "d8631e95": "AC: Luciene Moreira", "73339a18": "AC: Liliane Moreira", "9a5cc195": "Laryssa Almeida", "d479107d": "AC: Davi Ribeiro", "9d6a69de": "Lauany Andrade", "0b1d708d": "Let\u00edcia Avelino", "185f700d": "AC: Thales Luiz", "e1fcdbdc": "Let\u00edcia Costa", "4694d422": "AC: Mariana", "41bed5df": "Let\u00edcia Santos", "e2e7247e": "AC: Luiz Eduardo Medeiros", "4635746e": "Luana Da Costa Sigolo", "13b7f71a": "Lucilene Nunes", "3adc93d0": "AC: Marcos Ara\u00fajo", "9ee5cd76": "Lu\u00eds Guilherme", "a3136959": "Luiz Felipe Gomes Ferreira", "be3b2fc0": "Luiza Dutra Balduino Ferreira", "17edad6b": "AC: Nuriel Gomes", "8d2fc136": "Marcella Sousa", "ba89f306": "Mariana Adade", "53449292": "Mariana Carvalho", "1d5c11fc": "Mel Avolio", "0fd59bc1": "Nath\u00e1lia Dos Santos Felipe", "064cf550": "Nicole Caroline Nunes Silva Elias", "ae668204": "P\u00e2mela Pereira", "0b683f5d": "AC: Luamar Nunes", "ab5f562e": "Patricia Oliveira", "2eb0f863": "Rafael Gomes De Mello", "043442d3": "Rafaela Motta", "fb5ab265": "Rafaela Vidal", "01305d5a": "Rafaella Irm\u00e3", "eb1b46cc": "Raiza Kelem", "7b132d92": "AC: Junior", "469f9fb0": "Ramon Freire N\u00f3brega", "ff0acbe6": "Raquel Sousa Ferreira", "fb2ad3ce": "AC: Robson Dos Santos Ferreira", "fb255705": "Sarah Horsth", "0363e786": "AC: Carlos \u00c9der Andrade", "80516f02": "Shaiene Reis", "66f4473a": "Sueli", "0c4722b9": "Thais Leal", "551fac92": "AC: Vinicius Costa", "763d94b8": "Thayane Cristine", "ff9771c7": "Thayene", "33916e19": "AC: Wellington", "2215cae2": "Thiago De Matos Vieira", "609b5113": "Victor Hugo De Souza Do Esp\u00edrito Santo", "71a1366d": "Victor Queiroz", "7756e325": "Vit\u00f3ria Magalh\u00e3es", "0d745086": "AC: Silvia Magalh\u00e3es", "9aae4eae": "Wandinho", "6d98bf38": "AC: Rafaella", "94081e40": "Yan Hipolito", "a45cde8b": "Yasmim Beauty", "999336fc": "Rosana Mp", "5a1df189": "gabriel abreu", "8817491f": "Thais Barros", "fcd8b67b": "Alanderson Marques", "061e4e2d": "Aline", "9364bd1a": "Aline Cunhada", "9a7afedd": "amanda fonseca", "a33f30cf": "amanda medeiros", "ff195f28": "Ana Ckaudia", "15a02ce6": "Raphael Batman", "c34de54f": "Nay Atlantica", "48f853b1": "Bel\u00e3o", "84044ff9": "Belly", "907f35be": "Cau\u00e3 Barros Novo", "b8c9d3f2": "bruno caua", "dbd40527": "karoline barros", "7844cf79": "Chagas", "0d57e28d": "Cleber Coxinha Novo", "9f9f322a": "Cn", "0059f2c2": "Daniel Tio", "1ab64e84": "Darla", "09929f37": "Darla Almeida", "40426687": "Caio C\u00e9sar", "9d4d40f1": "Bento Novo", "1fc50216": "Bia Bmw", "4bd6a30e": "Anaoo", "9e2b2bbc": "Andre Primo Marcos", "bb650777": "Beatriz Alves", "7617f67e": "Diego Barbeiro Novo", "9be73198": "Douglas Primo Novo", "a90afec6": "Edmilson", "d3c15479": "dando", "ab6cff03": "vava", "417c7e9e": "pele", "1b25351b": "namorada pele", "503a7bd8": "felipe", "554dd837": "namorada felipe", "6bc30ce8": "Emily Marques", "5880aa76": "Gabriela Rosa - Novo", "d589c177": "Graciele Santana Contadora", "cbc22849": "Gregor Fotofrafia", "ec87044d": "Higor Dinda", "62202853": "Fernanda Nanda", "51870cd4": "Gabriel Nunes", "e49caa76": "Felipe - Etiqueta", "f106af7a": "Gabriel Alves", "0828574e": "Gabriela Pinheiro", "cd6fd181": "Janley", "55d5fdca": "Vinni Diniz", "f1b1214c": "Vinicius O.", "991558f4": "Victor Barbe", "6722f799": "Victor Hugoo", "aedba55d": "Tiago Silva", "90b12a1d": "Thiago Roberto", "2eef1837": "Thamires Fernandes", "dd2779b8": "Thaisa", "9795c13c": "Tamyres Neri", "d23bab3c": "Thabata Faria", "fb6a84b6": "Ramom Gomes", "8e86b483": "Ramon Freires", "bab522aa": "Pablo F.", "65048945": "Pablo Renato", "214b0062": "Jeferson fernandes", "24d2ea67": "Jefferson Cardoso", "683589a6": "Jenifer vitoria", "b0369284": "Jessica Cristina Jj", "05e4215b": "Jessica cristina 02", "da811e0f": "Joana Oliveira", "350a9e63": "Jo\u00e3o Matheus C8", "4f34f5f4": "jota", "052e10ae": "Jotta Bicha", "748db33d": "Joyce Alves HFB", "f2454111": "Ju Almeida", "f5cc79c1": "julia morena ", "6c4b8de0": "julia zad ", "f92a6c7c": "kau\u00e3 almeida", "0e27c0a4": "kaua marques", "34e19893": "Marcos freires", "e5a6795c": "Marluce", "88e3419c": "Milena", "daee5c09": "nathalia marques", "479f6c37": "PIT", "8d04b461": "Karlla Braga", "89b86383": "Leo Tio", "33a702db": "Lequinho", "53c2063d": "Lorraina Rezende", "05d784d6": "Luan Medeiross", "2e9faed6": "Vitu Cruz", "b22ff013": "Vin\u00edcius Assis", "f30ae95e": "Mylena", "997ee627": "Mp", "1272b2da": "BOSS", "8289a47e": "Janaina Fran\u00e7a", "fb78e567": "Luisa Lb", "5ce0ddea": "Leony Novo", "f5d6aa80": "Luiz Claudio", "bf494e92": "Lulu", "0baf7292": "Mands 2", "ef20c679": "Marcelaa", "0d2a72d8": "Marcio Felipe", "0dc5a4eb": "Marlon De Paula", "5bdcf001": "Matheus Santos", "28efd218": "Mere Marcos", "beb66cdb": "Pamela Prima", "7e25223b": "Rejane Fontes", "e949caa4": "Richard", "5ccc4b6b": "Rylton", "e7767637": "Rodrigo Mauricio", "00164bae": "V\u00e2nia Marcos", "d9a23880": "Victor Mendes", "3bf440db": "Kaua Ulisses", "b1b7ef90": "Madu Santana", "0ad0dd24": "Victor Hugo", "152e97ce": "J\u00fanior Copaja", "d404a5bf": "Lucas Chagas", "f115ffcf": "Pablo Renato", "b4d03916": "Thamires Fernandes", "9c393147": "Bruno Alonso ( Seu Personal )", "e9c0ccb5": "Amanda Fonseca Monteiro", "89e94284": "Samara Menezes", "458060aa": "Everton Lucena Nunes", "b3dfbe46": "Jose Luis Dias Bento", "f3bba689": "Thiago Roberto", "41c0b8fe": "Tarcizo Pinheiro Caetano", "6496ca7b": "Fernanda Ara\u00fajo", "e30ca124": "Darla Souza", "0a8e6369": "Luiz Henrique Mendes Rangel", "7e6c94ad": "AC: Bento Gabriel Gon\u00e7alves Laurindo De Brito", "f99ccf6d": "Victor Hugo De Souza", "22f054dd": "Magali Gama", "89284cc7": "Diana Peres", "546345a3": "Raphael Luz De Almeida", "45a1a74a": "Iula Andrade", "d891d56e": "La\u00eds Oliveira", "dea11a2b": "AC: Conrado Augusto", "52c0cea2": "yasmim martine", "94df0bb9": "jerry", "c45cfa73": "breno pedro", "b0819d8c": "coxinha", "b27430cb": "namorado coxinha", "3f09ba38": "bianca carvalho", "3b8538ab": "diego oliveira", "87226aad": "thauanny oliveira", "ada91a93": "kamili", "5db2137c": "figao"};
+        const usados = new Set();
+
+        const video = document.getElementById("video");
+        const canvas = document.getElementById("canvas");
+        const context = canvas.getContext("2d");
+        const resultado = document.getElementById("resultado");
+
+        navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } })
+            .then(stream => {
+                video.srcObject = stream;
+                video.setAttribute("playsinline", true);
+                requestAnimationFrame(scan);
+            });
+
+        function scan() {
+            if (video.readyState === video.HAVE_ENOUGH_DATA) {
+                canvas.height = video.videoHeight;
+                canvas.width = video.videoWidth;
+                context.drawImage(video, 0, 0, canvas.width, canvas.height);
+                const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
+                const code = jsQR(imageData.data, imageData.width, imageData.height, { inversionAttempts: "dontInvert" });
+                
+                if (code) {
+                    const codigo = code.data.trim();
+                    if (codigo in convidados) {
+                        if (usados.has(codigo)) {
+                            resultado.textContent = "❌ Código já foi usado!";
+                            resultado.style.color = "red";
+                        } else {
+                            usados.add(codigo);
+                            resultado.textContent = "✅ Acesso liberado para " + convidados[codigo];
+                            resultado.style.color = "green";
+                        }
+                    } else {
+                        resultado.textContent = "❌ Código inválido.";
+                        resultado.style.color = "red";
+                    }
+                }
+            }
+            requestAnimationFrame(scan);
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,11 @@
+
+{
+  "name": "Validador de Convites",
+  "short_name": "ValidadorQR",
+  "start_url": ".",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "description": "Sistema de validação de QR Codes para eventos",
+  "icons": [],
+  "theme_color": "#4CAF50"
+}
